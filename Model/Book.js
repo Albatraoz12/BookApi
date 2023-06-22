@@ -8,6 +8,7 @@ const BookSchema = new mongoose.Schema({
     data: Buffer,
     contentType: String,
   },
+  imageName: String,
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

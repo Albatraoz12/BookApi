@@ -11,7 +11,6 @@ function authorization(req, res, next) {
   try {
     const data = jwt.verify(token, process.env.SECRET);
     req.userId = data.id;
-    req.userRole = data.role;
     return next();
   } catch {
     return res.status(403).json({ error: 'You have an invalid token' });

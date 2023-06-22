@@ -1,6 +1,5 @@
 const express = require('express');
-const User = require('../Model/User');
-const jwt = require('jsonwebtoken');
+
 const {
   userRegistration,
   userLogin,

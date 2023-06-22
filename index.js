@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const userRouter = require('./Routes/UserRoute');
 require('dotenv').config();
 
 // initialize server
@@ -17,6 +18,9 @@ app.use(
 );
 app.use(express.json()); // Enables to send json as response
 app.use(cookieParser()); // Enables to set cookies to client
+
+//Routes
+app.use('/api', userRouter);
 
 // Add connection to mongodb
 mongoose.connect(process.env.MONGODB_URI, {

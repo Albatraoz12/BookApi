@@ -1,8 +1,8 @@
 // Server file
 const express = require('express');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 require('dotenv').config();
 
 // initialize server

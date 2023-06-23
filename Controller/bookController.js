@@ -30,7 +30,21 @@ const getBook = async (req, res) => {
       return res.status(404).json({ message: 'There is no book with that ID' });
     }
 
-    res.status(200).json({ book: getBookId });
+    // Check if the book has an image
+    if (
+      getBookId.image &&
+      getBookId.image.data &&
+      getBookId.image.contentType
+    ) {
+      // Set the response content type based on the image's contentType
+      res.contentType(getBookId.image.contentType);
+
+      // Send the image data
+      res.status(200).json(getBookId.image.data);
+    } else {
+      // If the book doesn't have an image, send the book details without the image data
+      res.status(200).json({ book: getBookId });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

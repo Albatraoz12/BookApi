@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const userRouter = require('./Routes/UserRoute');
+const bookRouter = require('./Routes/BookRoute');
 require('dotenv').config();
 
 // initialize server
@@ -21,6 +22,7 @@ app.use(cookieParser()); // Enables to set cookies to client
 
 //Routes
 app.use('/api', userRouter);
+app.use('/api', bookRouter);
 
 app.get('/', (req, res) => {
   const test = req.body;

@@ -1,6 +1,39 @@
 const User = require('../Model/User');
 const Book = require('../Model/Book');
+const mongoose = require('mongoose');
 
+// Get all books
+const getBooks = async (req, res) => {
+  try {
+    const getAllBooks = await Book.find();
+    res.status(200).json({ Books: getAllBooks });
+  } catch (error) {
+    res.send(500).json({ error: error.message });
+  }
+};
+
+// Get book by id
+const getBook = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+      return res.status(400).json({ message: 'Invalid book ID' });
+    }
+
+    const getBookId = await Book.findById(bookId);
+
+    if (!getBookId) {
+      return res.status(404).json({ message: 'There is no book with that ID' });
+    }
+
+    res.status(200).json({ book: getBookId });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Create a book
 const createBook = async (req, res) => {
   try {
     const validUser = await User.findOne({ _id: req.userId });
@@ -30,4 +63,4 @@ const createBook = async (req, res) => {
   }
 };
 
-module.exports = { createBook };
+module.exports = { createBook, getBooks, getBook };

@@ -10,6 +10,8 @@ require('dotenv').config();
 // initialize server
 const app = express();
 
+app.use('/uploads', express.static('uploads'));
+
 // Setup cors
 app.use(
   cors({

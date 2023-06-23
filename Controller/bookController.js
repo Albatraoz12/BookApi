@@ -21,7 +21,10 @@ const getBook = async (req, res) => {
       return res.status(400).json({ message: 'Invalid book ID' });
     }
 
-    const getBookId = await Book.findById(bookId);
+    const getBookId = await Book.findById(bookId).populate({
+      path: 'owner',
+      select: 'name email username',
+    });
 
     if (!getBookId) {
       return res.status(404).json({ message: 'There is no book with that ID' });
@@ -43,7 +46,9 @@ const createBook = async (req, res) => {
         .status(404)
         .json({ message: 'You are not authorized or logged in' });
 
-    const { title, description, imagePath, imageName } = req.body;
+    const { title, description } = req.body;
+    const imagePath = req.file.path;
+    const imageName = req.file.filename;
     console.log(`${title},${description},${imagePath},${imageName}`);
     const newBook = new Book({
       title: title,

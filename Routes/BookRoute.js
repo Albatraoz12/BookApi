@@ -6,6 +6,7 @@ const {
   createBook,
   getBooks,
   getBook,
+  deleteBook,
 } = require('../Controller/bookController');
 const { authorization } = require('../Middleware/middleware');
 
@@ -39,5 +40,8 @@ router.get('/getBooks', getBooks);
 
 // Route to get one book with an id
 router.get('/getBook/:id', getBook);
+
+// Route to delete Book
+router.delete('/deleteBook/:id', authorization, deleteBook);
 
 module.exports = router;

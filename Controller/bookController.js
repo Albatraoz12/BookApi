@@ -82,4 +82,32 @@ const createBook = async (req, res) => {
   }
 };
 
-module.exports = { createBook, getBooks, getBook };
+// Delete book
+const deleteBook = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    const userId = req.userId;
+
+    if (!bookId)
+      return res.status(400).json({ error: 'Please provide a valid id' });
+
+    const book = await Book.findById(bookId).populate({
+      path: 'owner',
+      select: 'id',
+    });
+
+    if (book.owner.id !== userId)
+      return res
+        .status(200)
+        .json({ error: 'You are not the owner of this book' });
+
+    book.deleteOne();
+
+    res.status(200).json({ message: 'You book has bow been deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    console.log(error);
+  }
+};
+
+module.exports = { createBook, getBooks, getBook, deleteBook };

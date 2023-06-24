@@ -87,24 +87,3 @@ const userLogout = (req, res) => {
 };
 
 module.exports = { userRegistration, userLogin, getUser, userLogout };
-
-// console.log(req.cookies.access_token);
-// if (req.cookies.access_token)
-//   return res.status(401).json({ message: 'You are already logged in' });
-// if (user) {
-//   const token = jwt.sign(
-//     { id: user._id, username: user.username, role: user.role },
-//     'ZDdIbFVmaT1uImX1mRxA9Mt4NTT6BA6Z'
-//   );
-
-//   return res
-//     .cookie('access_token', token, {
-//       httpOnly: true,
-//       sameSite: 'none',
-//       secure: true,
-//     })
-//     .status(200)
-//     .json({ message: 'Logged in successfully 😊 👌' });
-// } else {
-//   res.json({ message: 'sorry could not login' });
-// }

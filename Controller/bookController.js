@@ -102,7 +102,8 @@ const updateBook = async (req, res) => {
         .json({ message: 'You are not allowed to update this book' });
 
     const { title, description } = req.body;
-    const imageName = req.file.filename;
+    const imageName = req.file ? req.file.filename : bookFound.imageName;
+
     const updateBookInfo = {
       title: title,
       description: description,

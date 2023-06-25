@@ -88,6 +88,10 @@ const updateBook = async (req, res) => {
     const bookId = req.params.id;
     const validUser = await User.findOne({ _id: req.userId });
 
+    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+      return res.status(400).json({ error: 'Invalid book ID' });
+    }
+
     if (!validUser) {
       return res
         .status(404)
@@ -133,8 +137,8 @@ const deleteBook = async (req, res) => {
     const bookId = req.params.id;
     const userId = req.userId;
 
-    if (!bookId) {
-      return res.status(400).json({ error: 'Please provide a valid id' });
+    if (!mongoose.Types.ObjectId.isValid(bookId)) {
+      return res.status(400).json({ error: 'Invalid book ID' });
     }
 
     const book = await Book.findById(bookId).populate({

@@ -53,26 +53,24 @@ const createBook = async (req, res) => {
     const validUser = await User.findOne({ _id: req.userId });
 
     if (!validUser) {
-      return res
-        .status(404)
-        .json({ error: 'You are not authorized or logged in' });
+      return res.status(401).json({ error: 'Unauthorized or not logged in' });
     }
 
     const { title, description } = req.body;
-    const imagePath = req.file.path;
-    const imageName = req.file.filename;
+    const imagePath = req.file ? req.file.path : null;
+    const imageName = req.file ? req.file.filename : null;
 
     const newBook = new Book({
-      title: title,
-      description: description,
+      title,
+      description,
       image: imagePath,
-      imageName: imageName,
+      imageName,
       owner: req.userId,
     });
 
     await newBook.save();
 
-    res.status(200).json({
+    res.status(201).json({
       message: 'Book has been created!',
       data: newBook,
     });
@@ -86,34 +84,48 @@ const createBook = async (req, res) => {
 const updateBook = async (req, res) => {
   try {
     const bookId = req.params.id;
-    const validUser = await User.findOne({ _id: req.userId });
 
+    // Check if the bookId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(bookId)) {
       return res.status(400).json({ error: 'Invalid book ID' });
     }
 
+    // Check if the user is authorized and logged in
+    const validUser = await User.findOne({ _id: req.userId });
     if (!validUser) {
-      return res
-        .status(404)
-        .json({ error: 'You are not authorized or logged in' });
+      return res.status(401).json({ error: 'Unauthorized or not logged in' });
     }
+
+    // Find the book to be updated
     const bookFound = await Book.findOne({ _id: bookId });
+    if (!bookFound) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
 
-    if (!bookFound) return res.status(404).json({ message: 'Book not found' });
-    if (req.userId !== bookFound.owner.toString())
+    // Check if the user is the owner of the book
+    if (req.userId !== bookFound.owner.toString()) {
       return res
-        .status(400)
+        .status(403)
         .json({ message: 'You are not allowed to update this book' });
+    }
 
+    // Extract the fields to be updated from the request body
     const { title, description } = req.body;
-    const imageName = req.file ? req.file.filename : bookFound.imageName;
 
-    const updateBookInfo = {
-      title: title,
-      description: description,
-      imageName: imageName,
-      owner: req.userId,
-    };
+    // Update the book information
+    const updateBookInfo = {};
+
+    if (title) {
+      updateBookInfo.title = title;
+    }
+
+    if (description) {
+      updateBookInfo.description = description;
+    }
+
+    const imageName = req.file ? req.file.filename : bookFound.imageName;
+    updateBookInfo.imageName = imageName;
+
     const options = { new: true };
     const updatedBook = await Book.findByIdAndUpdate(
       bookId,
@@ -127,7 +139,7 @@ const updateBook = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error while creating your book' });
+    res.status(500).json({ error: 'Error while updating the book' });
   }
 };
 

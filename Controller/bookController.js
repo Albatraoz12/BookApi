@@ -82,6 +82,50 @@ const createBook = async (req, res) => {
   }
 };
 
+// Update book
+const updateBook = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    const validUser = await User.findOne({ _id: req.userId });
+
+    if (!validUser) {
+      return res
+        .status(404)
+        .json({ error: 'You are not authorized or logged in' });
+    }
+    const bookFound = await Book.findOne({ _id: bookId });
+
+    if (!bookFound) return res.status(404).json({ message: 'Book not found' });
+    if (req.userId !== bookFound.owner.toString())
+      return res
+        .status(400)
+        .json({ message: 'You are not allowed to update this book' });
+
+    const { title, description } = req.body;
+    const imageName = req.file.filename;
+    const updateBookInfo = {
+      title: title,
+      description: description,
+      imageName: imageName,
+      owner: req.userId,
+    };
+    const options = { new: true };
+    const updatedBook = await Book.findByIdAndUpdate(
+      bookId,
+      updateBookInfo,
+      options
+    );
+
+    res.status(200).json({
+      message: 'The book has been updated',
+      data: updatedBook,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error while creating your book' });
+  }
+};
+
 // Delete book
 const deleteBook = async (req, res) => {
   try {
@@ -116,4 +160,4 @@ const deleteBook = async (req, res) => {
   }
 };
 
-module.exports = { createBook, getBooks, getBook, deleteBook };
+module.exports = { createBook, getBooks, getBook, updateBook, deleteBook };
